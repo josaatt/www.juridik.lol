@@ -52,17 +52,17 @@ nav .container {
     font-size: 4vw;
     background: linear-gradient(
         45deg,
-        #58afdf,
-        #b6ffbb,
-        #9f7aea,
-        #58afdf
+        #ff2afc,
+        #00ffd9,
+        #ff2afc,
+        #00ffd9
     );
     background-size: 300%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     animation: aurora 15s linear infinite;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 20px rgba(255, 42, 252, 0.5);
     position: relative;
     z-index: 2;
 }
@@ -190,13 +190,54 @@ footer {
     bottom: -100%;
     background: linear-gradient(
         45deg,
-        rgba(88, 175, 223, 0.5),
-        rgba(182, 255, 187, 0.5),
-        rgba(159, 122, 234, 0.5)
+        rgba(255, 42, 252, 0.5),  /* Hot pink */
+        rgba(0, 255, 217, 0.5),   /* Cyan */
+        rgba(162, 0, 255, 0.5),   /* Purple */
+        rgba(255, 42, 252, 0.5)   /* Back to hot pink */
     );
     z-index: 1;
     filter: blur(60px);
     animation: auroraFlow 15s linear infinite;
+}
+
+.social-link {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    font-size: 1.8rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.social-link.linkedin {
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    transform: scale(1.05);
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.social-link.linkedin::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 @keyframes aurora {
@@ -221,15 +262,9 @@ footer {
 }
 
 @keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.8;
-    }
-    100% {
-        opacity: 1;
-    }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 @media (max-width: 768px) {
