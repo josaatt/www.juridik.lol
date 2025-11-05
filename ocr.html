@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Dokumenttjänst - juridik.lol</title>
+    <link rel="stylesheet" href="ocr-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Tillbaka
+            </a>
+            <h1 class="title">OCR Dokumenttjänst</h1>
+            <p class="subtitle">Fotografera eller ladda upp dokument för textigenkänning</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="upload-card">
+                <div class="upload-options">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-file-upload"></i> Ladda upp bild
+                    </button>
+                    <button class="btn btn-secondary" onclick="openCamera()">
+                        <i class="fas fa-camera"></i> Ta foto
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                </div>
+
+                <div id="cameraSection" class="camera-section" style="display: none;">
+                    <video id="camera" autoplay playsinline></video>
+                    <div class="camera-controls">
+                        <button class="btn btn-success" onclick="capturePhoto()">
+                            <i class="fas fa-camera"></i> Ta bild
+                        </button>
+                        <button class="btn btn-danger" onclick="closeCamera()">
+                            <i class="fas fa-times"></i> Stäng
+                        </button>
+                    </div>
+                </div>
+
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+        </div>
+
+        <div id="previewSection" class="preview-section" style="display: none;">
+            <h2>Förhandsgranskning</h2>
+            <div class="preview-card">
+                <img id="preview" alt="Förhandsgranskning">
+                <div class="preview-actions">
+                    <button class="btn btn-primary" onclick="processImage()">
+                        <i class="fas fa-cog"></i> OCR:a dokument
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetUpload()">
+                        <i class="fas fa-redo"></i> Välj ny bild
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="progressSection" class="progress-section" style="display: none;">
+            <div class="progress-card">
+                <div class="spinner"></div>
+                <p id="progressText">Förbereder OCR...</p>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressPercent" class="progress-percent">0%</p>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <h2>Resultat</h2>
+            <div class="result-card">
+                <div class="result-header">
+                    <div class="confidence-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="confidence">Säkerhet: -</span>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn btn-small" onclick="copyText()">
+                            <i class="fas fa-copy"></i> Kopiera
+                        </button>
+                        <button class="btn btn-small" onclick="downloadText()">
+                            <i class="fas fa-download"></i> Ladda ner
+                        </button>
+                    </div>
+                </div>
+                <div class="result-content">
+                    <pre id="ocrResult"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ocr-script.js"></script>
+</body>
+</html>
