@@ -200,6 +200,24 @@ footer {
     animation: auroraFlow 15s linear infinite;
 }
 
+.flowchart-link {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    font-size: 1.8rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 100;
+    color: rgba(0, 255, 217, 0.4);
+    text-shadow: 0 0 5px rgba(0, 255, 217, 0.2);
+}
+
+.flowchart-link:hover {
+    transform: scale(1.05);
+    color: rgba(0, 255, 217, 0.8);
+    text-shadow: 0 0 8px rgba(0, 255, 217, 0.4);
+}
+
 .social-link {
     position: fixed;
     bottom: 40px;
@@ -351,6 +369,12 @@ footer {
         font-size: 8vw;
     }
     
+    .flowchart-link {
+        bottom: 20px;
+        left: 20px;
+        font-size: 1.5rem;
+    }
+
     .social-link {
         bottom: 20px;
         right: 20px;
