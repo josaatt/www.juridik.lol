@@ -108,6 +108,9 @@ app.listen(PORT, async () => {
   // Initialize GitHub sync
   await githubSync.initialize();
 
+  // Initialize Obsidian vault with Bases and folder structure
+  await obsidianWriter.initialize();
+
   // Start email monitoring
   await startEmailMonitoring();
 });

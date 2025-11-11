@@ -16,10 +16,24 @@ AI-powered life management system that automatically triages incoming content (e
 - Extracts actionable information
 
 📝 **Obsidian Integration** - Auto-generates beautiful markdown notes
-- Structured frontmatter with metadata
+- Structured frontmatter with metadata for Bases compatibility
 - Daily notes automatically updated
 - Smart folder organization (Inbox, Projects, Areas, etc.)
 - Automatic linking between related notes
+- **NEW:** Auto-creates people notes with interaction tracking
+
+🎨 **Canvas Visualization** - Automatic visual relationship maps
+- Every note gets a Canvas showing connections
+- Visual display of people, dates, tasks, locations
+- JSON Canvas format (open standard)
+- Interactive and editable in Obsidian
+
+📊 **Obsidian Bases** - Powerful database views
+- 7 automatic bases: Tasks, Meetings, Finance, Ideas, People, Projects, Master
+- Filter, sort, and query your notes like a database
+- No coding required (unlike Dataview)
+- Card and table views
+- Custom formulas for computed properties
 
 🔄 **GitHub Sync** - Everything backed up and versioned
 - Automatic commits after each triage
@@ -29,11 +43,21 @@ AI-powered life management system that automatically triages incoming content (e
 ## Architecture
 
 ```
-Email Input → AI Processing → Triage Logic → Obsidian Note → GitHub Push
-   ↓             ↓                ↓              ↓              ↓
- IMAP       Gemini 2.5        Smart Rules    Markdown      Git Sync
-            Flash API         Extraction     Generation
+Email Input → AI Processing → Triage Logic → Obsidian Note → Canvas/Bases → GitHub Push
+   ↓             ↓                ↓              ↓              ↓              ↓
+ IMAP       Gemini 2.5        Smart Rules    Markdown      Visual Maps    Git Sync
+            Flash API         Extraction     + Frontmatter  + Databases
 ```
+
+### Components
+
+- **Email Receiver** - IMAP poller for `triage@fredrikivarsson.fi`
+- **Gemini Processor** - Multimodal AI analysis with OCR
+- **Triage Engine** - Smart categorization and extraction
+- **Obsidian Writer** - Markdown generation with rich frontmatter
+- **Canvas Generator** - Automatic visual relationship maps
+- **Base Generator** - Creates database views (.base files)
+- **GitHub Sync** - Automatic commits and push with retry
 
 ## Quick Start
 
@@ -196,6 +220,59 @@ deadline: 2025-11-30
 
 - [[2025-11-11-143500-faktura.pdf]]
 ```
+
+## Obsidian Bases & Canvas
+
+### What are Bases?
+
+**Bases** are Obsidian's built-in database feature that turns folders of notes into queryable databases. No coding required!
+
+The system automatically creates **7 bases**:
+
+1. **All Triage Items** - Master view of everything
+2. **Tasks** - Task management with filters (Urgent, By Energy, This Week)
+3. **Meetings** - Meeting notes with participants and dates
+4. **Finance** - Invoices and receipts with totals
+5. **Ideas** - Brainstorming and idea tracking
+6. **People** - Contact database with interaction history
+7. **Projects** - Project management with status tracking
+
+**Features:**
+- Filter by any property (type, category, priority, date, etc.)
+- Sort by multiple columns
+- Group by categories
+- Custom formulas (e.g., sum of amounts)
+- Multiple views per base
+- Card and table layouts
+
+**To use:** Enable "Bases" core plugin in Obsidian → Open any `.base` file
+
+### What are Canvas?
+
+**Canvas** files are visual maps showing relationships between notes. Each triaged item gets an automatic Canvas.
+
+**Canvas shows:**
+- Main note in center
+- Connected people (links to their notes)
+- Important dates
+- Action items
+- Locations
+
+**Format:** JSON Canvas (open standard) - works in any app supporting the spec
+
+**Location:** `Canvas/` folder - one `.canvas` file per triaged item
+
+**To use:** Just click any `.canvas` file in Obsidian!
+
+### Complete Guide
+
+See [OBSIDIAN-GUIDE.md](OBSIDIAN-GUIDE.md) for detailed instructions on:
+- Using Bases for filtering and querying
+- Creating custom views
+- Working with Canvas
+- People note management
+- Daily note integration
+- Advanced formulas and Dataview queries
 
 ## API Endpoints
 
