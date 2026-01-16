@@ -4,21 +4,334 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>juridik.lol</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        :root {
+            --black: #0f0f1b;
+            --dark: #1a1a2e;
+            --purple: #4a1942;
+            --magenta: #c84b9e;
+            --cyan: #00fff2;
+            --yellow: #fff847;
+            --white: #efefef;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--black);
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* CRT effect */
+        .crt {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .crt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15) 0px,
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        .crt::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+        }
+
+        /* Pixel grid background */
+        .pixel-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 8px 8px;
+            z-index: 1;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Pixel scales icon */
+        .scales {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 6vw, 3rem);
+            color: var(--white);
+            text-shadow:
+                4px 4px 0 var(--purple),
+                -2px -2px 0 var(--cyan);
+            letter-spacing: 0.05em;
+            animation: glitch 5s infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% {
+                text-shadow:
+                    4px 4px 0 var(--purple),
+                    -2px -2px 0 var(--cyan);
+            }
+            92% {
+                text-shadow:
+                    -4px 4px 0 var(--magenta),
+                    4px -2px 0 var(--cyan);
+            }
+            94% {
+                text-shadow:
+                    4px -4px 0 var(--cyan),
+                    -4px 2px 0 var(--magenta);
+            }
+            96% {
+                text-shadow:
+                    -2px 4px 0 var(--yellow),
+                    2px -4px 0 var(--purple);
+            }
+        }
+
+        .tagline {
+            font-size: clamp(0.5rem, 2vw, 0.75rem);
+            color: var(--cyan);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .tagline::before {
+            content: '> ';
+            color: var(--magenta);
+        }
+
+        .tagline::after {
+            content: '_';
+            animation: cursor 0.8s step-end infinite;
+        }
+
+        @keyframes cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .linkedin {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            background: var(--dark);
+            border: 3px solid var(--purple);
+            transition: all 0.1s step-end;
+        }
+
+        .linkedin:hover {
+            border-color: var(--cyan);
+            box-shadow:
+                0 0 0 3px var(--black),
+                0 0 0 6px var(--cyan);
+            transform: translate(-2px, -2px);
+        }
+
+        .linkedin svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--white);
+        }
+
+        .linkedin:hover svg {
+            fill: var(--cyan);
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--purple);
+            z-index: 100;
+        }
+
+        .corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; }
+        .corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; }
+
+        @media (max-width: 768px) {
+            .linkedin {
+                bottom: 16px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+            }
+            .corner { display: none; }
+        }
+    </style>
 </head>
 <body>
-    <div class="logo">
-        <div class="glitch" data-text="juridik.lol">juridik.lol</div>
+    <div class="crt"></div>
+    <div class="pixel-bg"></div>
+    <canvas id="canvas"></canvas>
+
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <div class="content">
+        <div class="scales">
+            <svg viewBox="0 0 16 16" fill="none">
+                <rect x="7" y="1" width="2" height="12" fill="#fff847"/>
+                <rect x="3" y="4" width="10" height="2" fill="#fff847"/>
+                <rect x="1" y="6" width="4" height="1" fill="#00fff2"/>
+                <rect x="11" y="6" width="4" height="1" fill="#00fff2"/>
+                <rect x="0" y="7" width="6" height="1" fill="#00fff2"/>
+                <rect x="10" y="7" width="6" height="1" fill="#00fff2"/>
+                <rect x="0" y="8" width="1" height="2" fill="#c84b9e"/>
+                <rect x="5" y="8" width="1" height="2" fill="#c84b9e"/>
+                <rect x="10" y="8" width="1" height="2" fill="#c84b9e"/>
+                <rect x="15" y="8" width="1" height="2" fill="#c84b9e"/>
+                <rect x="0" y="10" width="6" height="1" fill="#c84b9e"/>
+                <rect x="10" y="10" width="6" height="1" fill="#c84b9e"/>
+                <rect x="5" y="13" width="6" height="2" fill="#fff847"/>
+                <rect x="4" y="15" width="8" height="1" fill="#fff847"/>
+            </svg>
+        </div>
+        <h1>juridik.lol</h1>
+        <p class="tagline">rätten att skratta</p>
     </div>
-    <a href="flowchart.html" class="flowchart-link" title="Interaktivt Flödesschema">
-        <i class="fas fa-project-diagram"></i>
+
+    <a href="https://www.linkedin.com/in/fredrikivarsson/" target="_blank" rel="noopener" class="linkedin" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
     </a>
-    <a href="https://www.linkedin.com/in/fredrikivarsson/" class="social-link linkedin" target="_blank">
-        <i class="fab fa-linkedin"></i>
-    </a>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        let width, height;
+        const pixelSize = 8;
+        let stars = [];
+        let time = 0;
+
+        const colors = ['#c84b9e', '#00fff2', '#fff847', '#4a1942'];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const count = Math.floor((width * height) / 8000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.floor(Math.random() * width / pixelSize) * pixelSize,
+                    y: Math.floor(Math.random() * height / pixelSize) * pixelSize,
+                    size: pixelSize,
+                    speed: 0.5 + Math.random() * 1.5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    twinkle: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function update() {
+            time += 0.05;
+            stars.forEach(star => {
+                star.y += star.speed;
+                star.twinkle += 0.1;
+
+                if (star.y > height) {
+                    star.y = -pixelSize;
+                    star.x = Math.floor(Math.random() * width / pixelSize) * pixelSize;
+                }
+            });
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(15, 15, 27, 0.3)';
+            ctx.fillRect(0, 0, width, height);
+
+            stars.forEach(star => {
+                const alpha = 0.3 + Math.sin(star.twinkle) * 0.3;
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = alpha;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            });
+
+            ctx.globalAlpha = 1;
+        }
+
+        function animate() {
+            update();
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+    </script>
 </body>
 </html>
