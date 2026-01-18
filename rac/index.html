@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Från paragraf till beslut — Catala Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F8F9FA;
+      --bg-card: #FFFFFF;
+      --bg-code: #1a1a2e;
+      --text-primary: #111111;
+      --text-secondary: #4a4a4a;
+      --text-muted: #6b6b6b;
+      --text-code: #e8e8e8;
+      --accent-primary: #1e3a5f;
+      --accent-warm: #8b4513;
+      --accent-success: #1e3a5f;
+      --border-light: #e0e0e0;
+      --border-medium: #cccccc;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+      --radius-sm: 2px;
+      --radius-md: 4px;
+      --radius-lg: 6px;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* ==================== SCROLLYTELLING SECTIONS ==================== */
+
+    .section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 2rem;
+      position: relative;
+    }
+
+    .section-content {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Fade-in animation for scroll-triggered elements */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-in-delay-1 { transition-delay: 0.2s; }
+    .fade-in-delay-2 { transition-delay: 0.4s; }
+    .fade-in-delay-3 { transition-delay: 0.6s; }
+
+    /* ==================== SECTION 1: HERO ==================== */
+
+    .hero {
+      background: var(--bg-primary);
+      text-align: center;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 2rem;
+      line-height: 1.8;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+
+    .scroll-indicator svg {
+      width: 20px;
+      height: 20px;
+      opacity: 0.6;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(4px); }
+    }
+
+    /* ==================== SECTION 2: TRADITIONELL UTVECKLING ==================== */
+
+    .traditional {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .traditional h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--text-primary);
+    }
+
+    .flow-vertical {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 3rem;
+    }
+
+    .flow-step-large {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 0;
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: -1px;
+    }
+
+    .flow-step-large:first-child {
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+
+    .flow-step-large:last-child {
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    .flow-number {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 2px solid var(--accent-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .flow-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .flow-text strong {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .flow-text span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .flow-arrow-down {
+      display: none;
+    }
+
+    .problems-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .problem-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-left: 3px solid #8b0000;
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 240px;
+      max-width: 300px;
+    }
+
+    .problem-icon {
+      display: none;
+    }
+
+    .problem-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .problem-text strong {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #8b0000;
+    }
+
+    .problem-text span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .law-text-block {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-primary);
+    }
+
+    .law-text-block .highlight {
+      background: linear-gradient(120deg, #FEF3C7 0%, #FDE68A 100%);
+      padding: 0.1em 0.3em;
+      border-radius: 4px;
+    }
+
+    /* ==================== SECTION 3: HUR DET SKULLE KUNNA VARA ==================== */
+
+    .vision {
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .vision h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--text-primary);
+    }
+
+    .vision-step {
+      border-left: none;
+    }
+
+    .vision-number {
+      background: var(--accent-primary) !important;
+      border-color: var(--accent-primary) !important;
+      color: white !important;
+    }
+
+    .benefits-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-left: 3px solid var(--accent-primary);
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 240px;
+      max-width: 300px;
+    }
+
+    .benefit-icon {
+      display: none;
+    }
+
+    .benefit-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .benefit-text strong {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+    }
+
+    .benefit-text span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Code highlighting */
+    .code-keyword { color: #C586C0; }
+    .code-type { color: #4EC9B0; }
+    .code-number { color: #B5CEA8; }
+    .code-comment { color: #6A9955; font-style: italic; }
+    .code-operator { color: #D4D4D4; }
+    .code-variable { color: #9CDCFE; }
+
+    /* ==================== SECTION: RULES AS CODE ==================== */
+
+    .rules-as-code {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .rules-as-code h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .section-intro {
+      text-align: center;
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+
+    .section-intro em {
+      font-style: italic;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .value-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .value-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.75rem;
+      border: 1px solid var(--border-light);
+    }
+
+    .value-icon {
+      display: none;
+    }
+
+    .value-card h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--accent-primary);
+    }
+
+    .value-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .catala-intro {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 2rem 2.5rem;
+      border: 1px solid var(--border-light);
+      border-left: 3px solid var(--accent-primary);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .catala-intro h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .catala-intro p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .catala-intro p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ==================== SECTION 4: ETT CASE ==================== */
+
+    .case-study {
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .case-study h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .case-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .case-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 2rem;
+      border: 1px solid var(--border-light);
+      margin-bottom: 2rem;
+    }
+
+    .case-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .case-icon {
+      display: none;
+    }
+
+    .case-card-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .case-card-header span {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .case-facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .case-facts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .case-fact {
+      text-align: center;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+    }
+
+    .fact-label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .fact-value {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .case-calculation {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      border: 1px solid var(--border-light);
+    }
+
+    .case-calculation > h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .law-block {
+      margin-bottom: 1.5rem;
+      border-left: 3px solid var(--accent-primary);
+      padding-left: 1rem;
+    }
+
+    .law-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .law-block.final {
+      border-left-color: var(--accent-success);
+      background: linear-gradient(90deg, rgba(5, 150, 105, 0.05), transparent);
+      padding: 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .law-block-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .law-ref {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--accent-primary);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .law-block.final .law-ref {
+      background: var(--accent-success);
+    }
+
+    .law-title {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .law-block-content {
+      padding-left: 0.5rem;
+    }
+
+    .law-quote {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .calculation-steps {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed var(--border-light);
+      font-size: 0.9rem;
+    }
+
+    .calc-row:last-child {
+      border-bottom: none;
+    }
+
+    .calc-row span:first-child {
+      color: var(--text-secondary);
+    }
+
+    .calc-row span:last-child {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .calc-row.result {
+      background: rgba(30, 58, 95, 0.08);
+      margin: 0.5rem -0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border-bottom: none;
+    }
+
+    .calc-row.result span:last-child {
+      color: var(--accent-primary);
+    }
+
+    .calc-row.final-result {
+      background: var(--accent-success);
+      margin: 0.5rem -0.75rem -0.75rem -0.75rem;
+      padding: 1rem 0.75rem;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      border-bottom: none;
+    }
+
+    .calc-row.final-result span {
+      color: white !important;
+      font-weight: 600;
+    }
+
+    /* ==================== SECTION 5: CATALA DEMO ==================== */
+
+    .catala-demo {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .catala-demo h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .catala-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+      font-size: 1rem;
+    }
+
+    .split-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .split-view {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .split-panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+
+    .split-panel-header {
+      padding: 1rem 1.25rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .split-panel-header svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .split-panel.code-panel {
+      background: var(--bg-code);
+    }
+
+    .split-panel.code-panel .split-panel-header {
+      background: #2D2D2D;
+      border-bottom-color: #444;
+      color: #999;
+    }
+
+    .split-panel-content {
+      padding: 1.5rem;
+    }
+
+    .law-segment {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .law-segment:last-child { margin-bottom: 0; }
+
+    .law-segment:hover,
+    .law-segment.active {
+      background: #f0f4f8;
+      box-shadow: inset 0 0 0 1px var(--accent-primary);
+    }
+
+    .law-segment .ref {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .law-segment p {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .code-segment {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .code-segment:last-child { margin-bottom: 0; }
+
+    .code-segment:hover,
+    .code-segment.active {
+      background: rgba(37, 99, 235, 0.15);
+      box-shadow: inset 0 0 0 2px var(--accent-primary);
+    }
+
+    .code-segment pre {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-code);
+      white-space: pre-wrap;
+      margin: 0;
+    }
+
+    .sync-hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    /* ==================== SECTION 6: KALKYLATOR ==================== */
+
+    .calculator-section {
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .calculator-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .calculator-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .calculator-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 800px) {
+      .calculator-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Calc Panel (vänster) */
+    .calc-panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+    }
+
+    .calc-panel-header {
+      padding: 1rem 1.25rem;
+      background: var(--bg-code);
+      color: var(--text-code);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .calc-panel-body {
+      padding: 1.25rem;
+    }
+
+    .input-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .input-section:last-of-type {
+      margin-bottom: 1rem;
+    }
+
+    .input-section h4 {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .children-selector {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .child-option {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      background: var(--bg-secondary);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .child-option:hover {
+      background: var(--bg-card);
+      border-color: var(--border-medium);
+    }
+
+    .child-option.active {
+      background: var(--bg-card);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15);
+    }
+
+    .child-option .number {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: block;
+    }
+
+    .child-option .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 4rem 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+    }
+
+    .input-wrapper .unit {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 100px;
+      margin-top: 0.5rem;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(30, 58, 95, 0.25);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .calc-result {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-top: 1rem;
+      border: 1px solid var(--border-light);
+    }
+
+    .result-main {
+      text-align: center;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .result-main .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .result-main .amount {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+    }
+
+    .result-main .amount .suffix {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .result-main .period {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .result-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+    }
+
+    .breakdown-item .label {
+      color: var(--text-secondary);
+    }
+
+    .breakdown-item .value {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item.highlight {
+      background: var(--accent-primary);
+    }
+
+    .breakdown-item.highlight .label,
+    .breakdown-item.highlight .value {
+      color: white;
+    }
+
+    .breakdown-item:not(.highlight) {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+    }
+
+    /* Toggle for code view */
+    .code-toggle {
+      margin-top: 1.5rem;
+    }
+
+    .code-toggle-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .code-toggle-btn:hover {
+      background: var(--bg-card);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .code-toggle-btn svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .code-toggle-btn.expanded svg {
+      transform: rotate(180deg);
+    }
+
+    .code-preview {
+      margin-top: 1rem;
+      background: var(--bg-code);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: none;
+    }
+
+    .code-preview.visible {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .code-preview pre {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: var(--text-code);
+      white-space: pre-wrap;
+      margin: 0;
+    }
+
+    /* Calc result compact */
+    .calc-result-compact {
+      background: var(--accent-primary);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .calc-result-compact .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 0.5rem;
+    }
+
+    .calc-result-compact .result-amount {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .calc-result-compact .result-amount span {
+      font-size: 0.9rem;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    /* Rules Panel (höger) */
+    .rules-panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rules-panel-header {
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .view-switch {
+      display: flex;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      border: 1px solid var(--border-light);
+    }
+
+    .view-btn {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .view-btn.active {
+      background: var(--accent-primary);
+      color: white;
+      font-weight: 500;
+    }
+
+    .rules-panel-body {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      max-height: 520px;
+    }
+
+    .rules-view {
+      display: none;
+    }
+
+    .rules-view.active {
+      display: block;
+    }
+
+    /* Rule blocks */
+    .rule-block {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+      border-left: 3px solid var(--border-light);
+      background: var(--bg-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .rule-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .rule-block.active {
+      border-left-color: var(--accent-primary);
+      background: #f0f4f8;
+    }
+
+    .rule-block.highlight {
+      border-left-color: var(--accent-warm);
+      background: #faf5f0;
+    }
+
+    .rule-block.dimmed {
+      opacity: 0.5;
+    }
+
+    .rule-header {
+      margin-bottom: 0.5rem;
+    }
+
+    .rule-ref {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--text-muted);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+    }
+
+    .rule-block.active .rule-ref {
+      background: var(--accent-primary);
+    }
+
+    .rule-block.highlight .rule-ref {
+      background: var(--accent-warm);
+    }
+
+    .rule-content p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .rule-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Code rule blocks */
+    .rule-block.code {
+      background: var(--bg-code);
+      border-left-color: #444;
+    }
+
+    .rule-block.code.active {
+      border-left-color: var(--accent-primary);
+      background: #1a2744;
+    }
+
+    .rule-block.code.highlight {
+      border-left-color: var(--accent-warm);
+      background: #2d2a1a;
+    }
+
+    .rule-block.code .rule-ref {
+      background: #555;
+    }
+
+    .rule-block.code.active .rule-ref {
+      background: var(--accent-primary);
+    }
+
+    .rule-block.code.highlight .rule-ref {
+      background: var(--accent-warm);
+    }
+
+    .rule-block.code pre {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--text-code);
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .code-line {
+      display: inline;
+      transition: background 0.2s ease;
+    }
+
+    .code-line.active-child {
+      background: rgba(30, 58, 95, 0.4);
+      border-radius: 2px;
+    }
+
+    /* ==================== SECTION: MÖJLIGHETER ==================== */
+
+    .possibilities {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .possibilities h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .possibility-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .possibility-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 2rem;
+      border: 1px solid var(--border-light);
+    }
+
+    .possibility-card:hover {
+      border-color: var(--border-medium);
+    }
+
+    .possibility-icon {
+      display: none;
+    }
+
+    .possibility-card h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: var(--accent-primary);
+    }
+
+    .possibility-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .code-view {
+      background: var(--bg-code);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem;
+    }
+
+    /* Law text styling */
+    .law-chapter-header {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .law-list {
+      margin: 0.5rem 0 0 1.25rem;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .law-list li {
+      margin-bottom: 0.25rem;
+      padding: 0.2rem 0.4rem;
+      margin-left: -0.4rem;
+      border-radius: 3px;
+      transition: background 0.2s ease;
+    }
+
+    .law-list li.active-child {
+      background: #e8eef4;
+      font-weight: 500;
+    }
+
+    .code-chapter-header {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #999;
+      padding: 0.5rem 0.75rem;
+      background: #2D2D2D;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ==================== FOOTER ==================== */
+
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-light);
+    }
+
+    footer a {
+      color: var(--accent-primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ==================== PROGRESS INDICATOR ==================== */
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent-primary);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- SECTION 1: HERO -->
+  <section class="section hero" id="hero">
+    <div class="section-content">
+      <h1 class="fade-in">Digital lagstiftning</h1>
+      <p class="hero-subtitle fade-in fade-in-delay-1">
+        Hur säkerställer vi att IT-system tillämpar lagen korrekt — och kan ändras
+        tillförlitligt och snabbt när lagstiftningen ändras?
+      </p>
+      <p class="hero-subtitle fade-in fade-in-delay-2" style="margin-top: 0;">
+        Den här demonstrationen visar hur regler kan implementeras
+        så att både jurister och datorer förstår dem.
+      </p>
+    </div>
+    <div class="scroll-indicator">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+      <span>Scrolla för att fortsätta</span>
+    </div>
+  </section>
+
+  <!-- SECTION 2: TRADITIONELL UTVECKLING -->
+  <section class="section traditional" id="traditional">
+    <div class="section-content">
+      <h2 class="fade-in">Så implementeras lagregler idag</h2>
+
+      <div class="flow-vertical fade-in fade-in-delay-1">
+        <div class="flow-step-large">
+          <div class="flow-number">1</div>
+          <div class="flow-text">
+            <strong>Lagtext publiceras</strong>
+            <span>Riksdagen beslutar om ny eller ändrad lag</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large">
+          <div class="flow-number">2</div>
+          <div class="flow-text">
+            <strong>Jurist tolkar reglerna</strong>
+            <span>Översätter juridiskt språk till krav</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large">
+          <div class="flow-number">3</div>
+          <div class="flow-text">
+            <strong>Kravspecifikation skrivs</strong>
+            <span>Dokumenterar hur systemet ska bete sig</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large">
+          <div class="flow-number">4</div>
+          <div class="flow-text">
+            <strong>Utvecklare implementerar</strong>
+            <span>Skriver kod baserat på kravspec</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large">
+          <div class="flow-number">5</div>
+          <div class="flow-text">
+            <strong>Testare verifierar</strong>
+            <span>Kontrollerar att koden matchar kraven</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large">
+          <div class="flow-number">6</div>
+          <div class="flow-text">
+            <strong>Driftsättning</strong>
+            <span>Systemet går live</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="problems-list fade-in fade-in-delay-2">
+        <div class="problem-item">
+          <div class="problem-icon">⏱</div>
+          <div class="problem-text">
+            <strong>Lång ledtid</strong>
+            <span>Månader från lagändring till implementation</span>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">⚠</div>
+          <div class="problem-text">
+            <strong>Risk för tolkningsfel</strong>
+            <span>Information förloras i varje översättningssteg</span>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">🔍</div>
+          <div class="problem-text">
+            <strong>Svårt att spåra</strong>
+            <span>Ingen direkt koppling mellan lag och kod</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: HUR DET SKULLE KUNNA VARA -->
+  <section class="section vision" id="vision">
+    <div class="section-content">
+      <h2 class="fade-in">Hur det skulle kunna vara</h2>
+
+      <div class="flow-vertical fade-in fade-in-delay-1">
+        <div class="flow-step-large vision-step">
+          <div class="flow-number vision-number">1</div>
+          <div class="flow-text">
+            <strong>Lagregler publiceras</strong>
+            <span>Riksdagen beslutar om ny eller ändrad lag</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large vision-step">
+          <div class="flow-number vision-number">2</div>
+          <div class="flow-text">
+            <strong>Jurist och utvecklare implementerar tillsammans</strong>
+            <span>Reglerna skrivs i ett språk båda förstår</span>
+          </div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+
+        <div class="flow-step-large vision-step">
+          <div class="flow-number vision-number">3</div>
+          <div class="flow-text">
+            <strong>Juristen kan förstå koden</strong>
+            <span>Och säkerställa att den stämmer överens med lagtexten</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="benefits-list fade-in fade-in-delay-2">
+        <div class="benefit-item">
+          <div class="benefit-icon">⚡</div>
+          <div class="benefit-text">
+            <strong>Snabbare implementation</strong>
+            <span>Färre steg från lag till fungerande system</span>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🔗</div>
+          <div class="benefit-text">
+            <strong>Direkt koppling</strong>
+            <span>Varje kodrad kan spåras till lagtexten</span>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">✓</div>
+          <div class="benefit-text">
+            <strong>Juristen kan verifiera</strong>
+            <span>Ingen "black box" — koden är läsbar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: RULES AS CODE -->
+  <section class="section rules-as-code" id="rules-as-code">
+    <div class="section-content">
+      <h2 class="fade-in">Rules as Code</h2>
+      <p class="section-intro fade-in fade-in-delay-1">
+        Idén att uttrycka lagregler som körbar kod kallas internationellt för <em>Rules as Code</em>.
+        Istället för att manuellt tolka och implementera lagtext skapar man en direkt,
+        maskinläsbar representation av reglerna.
+      </p>
+
+      <div class="value-cards fade-in fade-in-delay-2">
+        <div class="value-card">
+          <div class="value-icon">🎯</div>
+          <h3>Precision</h3>
+          <p>Kod är entydig — den gör exakt vad som står. Tolkningsutrymmet minimeras.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🔍</div>
+          <h3>Spårbarhet</h3>
+          <p>Varje beräkning kan spåras tillbaka till den specifika lagparagraf den implementerar.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">✅</div>
+          <h3>Verifierbarhet</h3>
+          <p>Jurister kan granska koden och bekräfta att den överensstämmer med lagtexten.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">⚡</div>
+          <h3>Snabbhet</h3>
+          <p>Lagändringar kan implementeras och testas på dagar istället för månader.</p>
+        </div>
+      </div>
+
+      <div class="catala-intro fade-in fade-in-delay-3">
+        <h3>Catala — ett språk för lagstiftning</h3>
+        <p>
+          <strong>Catala</strong> är ett programmeringsspråk utvecklat specifikt för att formalisera lagtext.
+          Det är designat för att vara läsbart för både jurister och utvecklare, med syntax som
+          speglar hur lagar är strukturerade.
+        </p>
+        <p>
+          Catala-kod kan kompileras till körbar programvara, men också granskas och valideras
+          av juridiska experter som inte behöver vara programmerare.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: ETT CASE -->
+  <section class="section case-study" id="case">
+    <div class="section-content">
+      <h2 class="fade-in">Ett exempel</h2>
+      <p class="case-subtitle fade-in">Förenklat exempel på beräkning av bostadsbidrag</p>
+
+      <!-- Förutsättningar -->
+      <div class="case-card fade-in fade-in-delay-1">
+        <div class="case-card-header">
+          <div class="case-icon">👨‍👩‍👧‍👦</div>
+          <div>
+            <h3>Förutsättningar</h3>
+            <span>Familjen har rätt till bostadsbidrag</span>
+          </div>
+        </div>
+        <div class="case-facts">
+          <div class="case-fact">
+            <span class="fact-label">Hemmavarande barn</span>
+            <span class="fact-value">2</span>
+          </div>
+          <div class="case-fact">
+            <span class="fact-label">Bostadskostnad</span>
+            <span class="fact-value">7 000 kr/mån</span>
+          </div>
+          <div class="case-fact">
+            <span class="fact-label">Bidragsgrundande inkomst</span>
+            <span class="fact-value">180 000 kr/år</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beräkning -->
+      <div class="case-calculation fade-in fade-in-delay-2">
+        <h3>Beräkning enligt 97 kap. socialförsäkringsbalken</h3>
+
+        <!-- 15 § -->
+        <div class="law-block">
+          <div class="law-block-header">
+            <span class="law-ref">15 §</span>
+            <span class="law-title">Grundläggande bestämmelser</span>
+          </div>
+          <div class="law-block-content">
+            <p class="law-quote">Bostadsbidrag till barnfamiljer beräknas enligt 18–23 §§. Om den bidragsgrundande inkomsten överstiger 150 000 kronor ska bidraget minskas med 20 procent av den överskjutande inkomsten.</p>
+          </div>
+        </div>
+
+        <!-- 18 § -->
+        <div class="law-block">
+          <div class="law-block-header">
+            <span class="law-ref">18 §</span>
+            <span class="law-title">Bidrag till bostadskostnad</span>
+          </div>
+          <div class="law-block-content">
+            <p class="law-quote">Bostadsbidrag lämnas med 50 procent av den del av bostadskostnaden som för familjer med två barn överstiger 1 400 kronor men inte 7 900 kronor.</p>
+            <div class="calculation-steps">
+              <div class="calc-row">
+                <span>Nedre gräns</span>
+                <span>1 400 kr</span>
+              </div>
+              <div class="calc-row">
+                <span>Övre gräns (2 barn)</span>
+                <span>7 900 kr</span>
+              </div>
+              <div class="calc-row">
+                <span>Bidragsgrundande: 7 000 − 1 400</span>
+                <span>5 600 kr</span>
+              </div>
+              <div class="calc-row result">
+                <span>Bidrag till bostadskostnad (50%)</span>
+                <span>2 800 kr</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 22 § -->
+        <div class="law-block">
+          <div class="law-block-header">
+            <span class="law-ref">22 §</span>
+            <span class="law-title">Särskilt bidrag</span>
+          </div>
+          <div class="law-block-content">
+            <p class="law-quote">Bostadsbidrag lämnas som särskilt bidrag för hemmavarande barn med 2 000 kronor till familjer med två barn.</p>
+            <div class="calculation-steps">
+              <div class="calc-row result">
+                <span>Särskilt bidrag (2 barn)</span>
+                <span>2 000 kr</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slutlig beräkning -->
+        <div class="law-block final">
+          <div class="law-block-header">
+            <span class="law-ref">15 §</span>
+            <span class="law-title">Inkomstavdrag och slutligt bidrag</span>
+          </div>
+          <div class="law-block-content">
+            <div class="calculation-steps">
+              <div class="calc-row">
+                <span>Preliminärt bidrag: 2 800 + 2 000</span>
+                <span>4 800 kr</span>
+              </div>
+              <div class="calc-row">
+                <span>Inkomstavdrag: (180 000 − 150 000) × 20% ÷ 12</span>
+                <span>−500 kr</span>
+              </div>
+              <div class="calc-row final-result">
+                <span>Bostadsbidrag per månad</span>
+                <span>4 300 kr</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: CATALA - LAG OCH KOD -->
+  <section class="section catala-demo" id="catala">
+    <div class="section-content">
+      <h2 class="fade-in">Catala: Kod som speglar lagen</h2>
+      <p class="catala-subtitle fade-in fade-in-delay-1">
+        Varje kodrad kan spåras direkt till lagtexten — klicka för att se kopplingen
+      </p>
+
+      <div class="split-view fade-in fade-in-delay-2">
+        <div class="split-panel">
+          <div class="split-panel-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Lagtext
+          </div>
+          <div class="split-panel-content">
+            <div class="law-segment" data-segment="1">
+              <div class="ref">15 § första stycket</div>
+              <p>Bostadsbidrag till barnfamiljer beräknas enligt 18–23 §§.</p>
+            </div>
+            <div class="law-segment" data-segment="2">
+              <div class="ref">15 § andra stycket</div>
+              <p>Om den bidragsgrundande inkomsten överstiger <strong>150 000 kronor</strong> ska bidraget minskas med <strong>20 procent</strong> av den överskjutande inkomsten.</p>
+            </div>
+            <div class="law-segment" data-segment="3">
+              <div class="ref">18 § – två barn</div>
+              <p>...för familjer med två barn överstiger <strong>1 400 kronor</strong> men inte <strong>7 900 kronor</strong></p>
+            </div>
+            <div class="law-segment" data-segment="4">
+              <div class="ref">22 § – två barn</div>
+              <p>...med <strong>2 000 kronor</strong> till familjer med två barn</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="split-panel code-panel">
+          <div class="split-panel-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+            Catala-kod
+          </div>
+          <div class="split-panel-content">
+            <div class="code-segment" data-segment="1">
+              <pre><code><span class="code-comment"># 15 § första stycket</span>
+<span class="code-keyword">definition</span> <span class="code-variable">preliminart_bidrag</span> <span class="code-keyword">equals</span>
+  <span class="code-variable">bidrag_till_bostadskostnad</span> <span class="code-operator">+</span> <span class="code-variable">sarskilt_bidrag</span></code></pre>
+            </div>
+            <div class="code-segment" data-segment="2">
+              <pre><code><span class="code-comment"># 15 § andra stycket: inkomstavdrag</span>
+<span class="code-keyword">definition</span> <span class="code-variable">inkomstgrans</span> <span class="code-keyword">equals</span> <span class="code-number">$150,000</span>
+<span class="code-keyword">definition</span> <span class="code-variable">inkomstavdrag</span> <span class="code-keyword">equals</span>
+  <span class="code-keyword">if</span> <span class="code-variable">inkomst</span> <span class="code-operator">&lt;=</span> <span class="code-variable">inkomstgrans</span> <span class="code-keyword">then</span> <span class="code-number">$0</span>
+  <span class="code-keyword">else</span> (<span class="code-variable">inkomst</span> <span class="code-operator">-</span> <span class="code-variable">inkomstgrans</span>) <span class="code-operator">*</span> <span class="code-number">0.2</span> <span class="code-operator">/</span> <span class="code-number">12</span></code></pre>
+            </div>
+            <div class="code-segment" data-segment="3">
+              <pre><code><span class="code-comment"># 18 § övre gräns för 2 barn</span>
+<span class="code-keyword">definition</span> <span class="code-variable">ovre_grans</span> <span class="code-keyword">under condition</span>
+  <span class="code-variable">antal_barn</span> <span class="code-operator">=</span> <span class="code-number">2</span>
+<span class="code-keyword">consequence equals</span> <span class="code-number">$7,900</span></code></pre>
+            </div>
+            <div class="code-segment" data-segment="4">
+              <pre><code><span class="code-comment"># 22 § särskilt bidrag för 2 barn</span>
+<span class="code-keyword">definition</span> <span class="code-variable">sarskilt_bidrag</span> <span class="code-keyword">under condition</span>
+  <span class="code-variable">antal_barn</span> <span class="code-operator">=</span> <span class="code-number">2</span>
+<span class="code-keyword">consequence equals</span> <span class="code-number">$2,000</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 6: KALKYLATOR -->
+  <section class="section calculator-section" id="calculator">
+    <div class="section-content">
+      <h2 class="fade-in">Prova själv</h2>
+      <p class="calculator-subtitle fade-in fade-in-delay-1">
+        Ändra förutsättningarna och se vilka regler som tillämpas
+      </p>
+
+      <div class="calculator-split fade-in fade-in-delay-2">
+        <!-- Vänster: Kalkylator -->
+        <div class="calc-panel">
+          <div class="calc-panel-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="2" width="16" height="20" rx="2"/>
+              <line x1="8" y1="6" x2="16" y2="6"/>
+            </svg>
+            Förutsättningar
+          </div>
+          <div class="calc-panel-body">
+            <div class="input-section">
+              <h4>Antal hemmavarande barn</h4>
+              <div class="children-selector" id="childrenSelector">
+                <div class="child-option active" data-value="1">
+                  <span class="number">1</span>
+                  <span class="label">barn</span>
+                </div>
+                <div class="child-option" data-value="2">
+                  <span class="number">2</span>
+                  <span class="label">barn</span>
+                </div>
+                <div class="child-option" data-value="3">
+                  <span class="number">3+</span>
+                  <span class="label">barn</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-section">
+              <h4>Bostadskostnad</h4>
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <input type="number" id="housingCost" value="6000" min="0" max="20000" step="100">
+                  <span class="unit">kr/mån</span>
+                </div>
+                <input type="range" id="housingCostSlider" value="6000" min="0" max="15000" step="100">
+              </div>
+            </div>
+
+            <div class="input-section">
+              <h4>Bidragsgrundande inkomst</h4>
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <input type="number" id="income" value="180000" min="0" max="500000" step="10000">
+                  <span class="unit">kr/år</span>
+                </div>
+                <input type="range" id="incomeSlider" value="180000" min="0" max="400000" step="5000">
+              </div>
+            </div>
+
+            <div class="calc-result-compact">
+              <div class="result-label">Bostadsbidrag</div>
+              <div class="result-amount" id="resultAmount">3 800 <span>kr/mån</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Höger: Lag/Kod -->
+        <div class="rules-panel">
+          <div class="rules-panel-header">
+            <div class="view-switch">
+              <button class="view-btn active" data-view="law">Lagtext</button>
+              <button class="view-btn" data-view="code">Catala-kod</button>
+            </div>
+          </div>
+          <div class="rules-panel-body">
+            <!-- Lagtext-vy -->
+            <div class="rules-view law-view active" id="lawView">
+              <div class="law-chapter-header">97 kap. Socialförsäkringsbalken</div>
+
+              <div class="rule-block" data-rule="15" id="rule15">
+                <div class="rule-header">
+                  <span class="rule-ref">15 §</span>
+                </div>
+                <div class="rule-content">
+                  <p>Bostadsbidrag till barnfamiljer beräknas enligt 18–23 §§.</p>
+                  <p>Om den bidragsgrundande inkomsten överstiger 150 000 kronor för en försäkrad, eller för makar 75 000 kronor för var och en av dem, ska bidraget minskas med 20 procent av den överskjutande inkomsten.</p>
+                </div>
+              </div>
+
+              <div class="rule-block" data-rule="16" id="rule16">
+                <div class="rule-header">
+                  <span class="rule-ref">16 §</span>
+                </div>
+                <div class="rule-content">
+                  <p>Bidrag som beräknas till mindre belopp än 1 200 kronor för helt år betalas inte ut.</p>
+                </div>
+              </div>
+
+              <div class="rule-block" data-rule="17" id="rule17">
+                <div class="rule-header">
+                  <span class="rule-ref">17 §</span>
+                </div>
+                <div class="rule-content">
+                  <p>Bostadsbidrag får inte lämnas för fler än tre barn.</p>
+                </div>
+              </div>
+
+              <div class="rule-block" data-rule="18" id="rule18">
+                <div class="rule-header">
+                  <span class="rule-ref">18 §</span>
+                </div>
+                <div class="rule-content">
+                  <p>Bostadsbidrag lämnas månadsvis som bidrag till kostnader för bostad med 50 procent av den del av bostadskostnaden per månad som för familjer med</p>
+                  <ul class="law-list">
+                    <li data-children="1">ett barn överstiger 1 400 kronor men inte 6 800 kronor,</li>
+                    <li data-children="2">två barn överstiger 1 400 kronor men inte 7 900 kronor, och</li>
+                    <li data-children="3">tre eller flera barn överstiger 1 400 kronor men inte 8 600 kronor.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="rule-block" data-rule="22" id="rule22">
+                <div class="rule-header">
+                  <span class="rule-ref">22 §</span>
+                </div>
+                <div class="rule-content">
+                  <p>Bostadsbidrag lämnas månadsvis som särskilt bidrag för hemmavarande barn med</p>
+                  <ul class="law-list">
+                    <li data-children="1">1 500 kronor till familjer med ett barn,</li>
+                    <li data-children="2">2 000 kronor till familjer med två barn, och</li>
+                    <li data-children="3">2 650 kronor till familjer med tre eller flera barn.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kod-vy -->
+            <div class="rules-view code-view" id="codeView">
+              <div class="code-chapter-header">97 kap. Socialförsäkringsbalken — Catala</div>
+
+              <div class="rule-block code" data-rule="15" id="code15">
+                <div class="rule-header">
+                  <span class="rule-ref">15 §</span>
+                  <span class="rule-status"></span>
+                </div>
+                <pre><code><span class="code-comment">/*
+ * 15 § Bostadsbidrag till barnfamiljer beräknas enligt 18–23 §§.
+ * Om den bidragsgrundande inkomsten överstiger 150 000 kronor
+ * ska bidraget minskas med 20 procent av den överskjutande inkomsten.
+ */</span>
+
+<span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">inkomstgräns</span> <span class="code-keyword">equals</span> <span class="code-number">$150,000</span>
+  <span class="code-keyword">definition</span> <span class="code-variable">avdragsprocent</span> <span class="code-keyword">equals</span> <span class="code-number">20%</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">preliminärt_bidrag</span> <span class="code-keyword">equals</span>
+    <span class="code-variable">bidrag_till_bostadskostnad</span> <span class="code-operator">+</span> <span class="code-variable">särskilt_bidrag</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">inkomstavdrag</span> <span class="code-keyword">equals</span>
+    <span class="code-keyword">if</span> <span class="code-variable">bidragsgrundande_inkomst</span> <span class="code-operator"><=</span> <span class="code-variable">inkomstgräns</span>
+    <span class="code-keyword">then</span> <span class="code-number">$0</span>
+    <span class="code-keyword">else</span> (<span class="code-variable">bidragsgrundande_inkomst</span> <span class="code-operator">-</span> <span class="code-variable">inkomstgräns</span>)
+         <span class="code-operator">*</span> <span class="code-variable">avdragsprocent</span> <span class="code-operator">/</span> <span class="code-number">12</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">slutligt_bidrag</span> <span class="code-keyword">equals</span>
+    <span class="code-variable">preliminärt_bidrag</span> <span class="code-operator">-</span> <span class="code-variable">inkomstavdrag</span></code></pre>
+              </div>
+
+              <div class="rule-block code" data-rule="16" id="code16">
+                <div class="rule-header">
+                  <span class="rule-ref">16 §</span>
+                  <span class="rule-status"></span>
+                </div>
+                <pre><code><span class="code-comment">/*
+ * 16 § Bidrag som beräknas till mindre belopp än 1 200 kronor
+ * för helt år betalas inte ut.
+ */</span>
+
+<span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">minsta_årliga_bidrag</span> <span class="code-keyword">equals</span> <span class="code-number">$1,200</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">utbetalas</span> <span class="code-keyword">equals</span>
+    <span class="code-variable">slutligt_bidrag</span> <span class="code-operator">*</span> <span class="code-number">12</span> <span class="code-operator">>=</span> <span class="code-variable">minsta_årliga_bidrag</span></code></pre>
+              </div>
+
+              <div class="rule-block code" data-rule="17" id="code17">
+                <div class="rule-header">
+                  <span class="rule-ref">17 §</span>
+                  <span class="rule-status"></span>
+                </div>
+                <pre><code><span class="code-comment">/*
+ * 17 § Bostadsbidrag får inte lämnas för fler än tre barn.
+ */</span>
+
+<span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">max_antal_barn</span> <span class="code-keyword">equals</span> <span class="code-number">3</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">antal_barn_för_beräkning</span> <span class="code-keyword">equals</span>
+    <span class="code-keyword">if</span> <span class="code-variable">antal_hemmavarande_barn</span> <span class="code-operator">></span> <span class="code-variable">max_antal_barn</span>
+    <span class="code-keyword">then</span> <span class="code-variable">max_antal_barn</span>
+    <span class="code-keyword">else</span> <span class="code-variable">antal_hemmavarande_barn</span></code></pre>
+              </div>
+
+              <div class="rule-block code" data-rule="18" id="code18">
+                <div class="rule-header">
+                  <span class="rule-ref">18 §</span>
+                </div>
+                <pre><code><span class="code-comment">/*
+ * 18 § Bostadsbidrag lämnas med 50 procent av den del av
+ * bostadskostnaden per månad som för familjer med:
+ * - ett barn överstiger 1 400 kr men inte 6 800 kr
+ * - två barn överstiger 1 400 kr men inte 7 900 kr
+ * - tre+ barn överstiger 1 400 kr men inte 8 600 kr
+ */</span>
+
+<span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">nedre_gräns</span> <span class="code-keyword">equals</span> <span class="code-number">$1,400</span>
+  <span class="code-keyword">definition</span> <span class="code-variable">bidragsprocent</span> <span class="code-keyword">equals</span> <span class="code-number">50%</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">övre_gräns</span> <span class="code-keyword">equals</span>
+    <span class="code-keyword">match</span> <span class="code-variable">antal_barn_för_beräkning</span> <span class="code-keyword">with pattern</span>
+<span class="code-line" data-children="1">    <span class="code-operator">|</span> <span class="code-number">1</span> <span class="code-operator">-></span> <span class="code-number">$6,800</span></span>
+<span class="code-line" data-children="2">    <span class="code-operator">|</span> <span class="code-number">2</span> <span class="code-operator">-></span> <span class="code-number">$7,900</span></span>
+<span class="code-line" data-children="3">    <span class="code-operator">|</span> <span class="code-number">_</span> <span class="code-operator">-></span> <span class="code-number">$8,600</span></span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">bidragsgrundande_kostnad</span> <span class="code-keyword">equals</span>
+    <span class="code-keyword">max of</span> (
+      <span class="code-keyword">min of</span> (<span class="code-variable">bostadskostnad</span>, <span class="code-variable">övre_gräns</span>) <span class="code-operator">-</span> <span class="code-variable">nedre_gräns</span>
+    ) <span class="code-keyword">and</span> <span class="code-number">$0</span>
+
+  <span class="code-keyword">definition</span> <span class="code-variable">bidrag_till_bostadskostnad</span> <span class="code-keyword">equals</span>
+    <span class="code-variable">bidragsgrundande_kostnad</span> <span class="code-operator">*</span> <span class="code-variable">bidragsprocent</span></code></pre>
+              </div>
+
+              <div class="rule-block code" data-rule="22" id="code22">
+                <div class="rule-header">
+                  <span class="rule-ref">22 §</span>
+                </div>
+                <pre><code><span class="code-comment">/*
+ * 22 § Bostadsbidrag lämnas som särskilt bidrag med:
+ * - 1 500 kr till familjer med ett barn
+ * - 2 000 kr till familjer med två barn
+ * - 2 650 kr till familjer med tre+ barn
+ */</span>
+
+<span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">särskilt_bidrag</span> <span class="code-keyword">equals</span>
+    <span class="code-keyword">match</span> <span class="code-variable">antal_barn_för_beräkning</span> <span class="code-keyword">with pattern</span>
+<span class="code-line" data-children="1">    <span class="code-operator">|</span> <span class="code-number">1</span> <span class="code-operator">-></span> <span class="code-number">$1,500</span></span>
+<span class="code-line" data-children="2">    <span class="code-operator">|</span> <span class="code-number">2</span> <span class="code-operator">-></span> <span class="code-number">$2,000</span></span>
+<span class="code-line" data-children="3">    <span class="code-operator">|</span> <span class="code-number">_</span> <span class="code-operator">-></span> <span class="code-number">$2,650</span></span></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: MÖJLIGHETER -->
+  <section class="section possibilities" id="possibilities">
+    <div class="section-content">
+      <h2 class="fade-in">Möjligheter</h2>
+      <p class="section-intro fade-in fade-in-delay-1">
+        När lagstiftning finns som körbar kod öppnas nya möjligheter för både
+        myndigheter, medborgare och lagstiftare.
+      </p>
+
+      <div class="possibility-grid fade-in fade-in-delay-2">
+        <div class="possibility-card">
+          <div class="possibility-icon">🧪</div>
+          <h3>Testa implementationen</h3>
+          <p>
+            Kör automatiserade tester mot lagtexten för att verifiera att implementeringen
+            är korrekt. Varje paragraf kan testas isolerat med kända in- och utdata.
+          </p>
+        </div>
+
+        <div class="possibility-card">
+          <div class="possibility-icon">📊</div>
+          <h3>Simulera utfall</h3>
+          <p>
+            Analysera hur lagändringar påverkar olika grupper innan de träder i kraft.
+            Kör "what-if"-scenarier på stora datamängder.
+          </p>
+        </div>
+
+        <div class="possibility-card">
+          <div class="possibility-icon">🔄</div>
+          <h3>Versionhantering</h3>
+          <p>
+            Spåra ändringar över tid. Se exakt vad som ändrades mellan två versioner
+            av lagen och hur det påverkar beräkningarna.
+          </p>
+        </div>
+
+        <div class="possibility-card">
+          <div class="possibility-icon">🌐</div>
+          <h3>API:er för beslutsstöd</h3>
+          <p>
+            Exponera reglerna som tjänster som andra system kan anropa. Säkerställ
+            att alla myndigheter tillämpar samma regler på samma sätt.
+          </p>
+        </div>
+
+        <div class="possibility-card">
+          <div class="possibility-icon">👤</div>
+          <h3>Transparens för medborgare</h3>
+          <p>
+            Låt medborgare se exakt hur deras bidrag beräknades och vilka
+            regler som tillämpades — inte bara resultatet.
+          </p>
+        </div>
+
+        <div class="possibility-card">
+          <div class="possibility-icon">⚖️</div>
+          <h3>Juridisk kvalitetssäkring</h3>
+          <p>
+            Upptäck motsägelser och luckor i lagstiftningen innan den antas.
+            Formalisering tvingar fram precision.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    // ==================== SCROLL PROGRESS BAR ====================
+    const progressBar = document.getElementById('progressBar');
+
+    function updateProgressBar() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    window.addEventListener('scroll', updateProgressBar);
+
+    // ==================== INTERSECTION OBSERVER FOR FADE-IN ====================
+    const fadeElements = document.querySelectorAll('.fade-in');
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    fadeElements.forEach(el => fadeObserver.observe(el));
+
+    // ==================== LAW/CODE SYNC ====================
+    const lawSegments = document.querySelectorAll('.law-segment');
+    const codeSegments = document.querySelectorAll('.code-segment');
+
+    function highlightSegment(segmentId) {
+      // Remove all active states
+      lawSegments.forEach(s => s.classList.remove('active'));
+      codeSegments.forEach(s => s.classList.remove('active'));
+
+      // Add active to matching segments
+      document.querySelectorAll(`[data-segment="${segmentId}"]`).forEach(s => {
+        s.classList.add('active');
+      });
+    }
+
+    lawSegments.forEach(segment => {
+      segment.addEventListener('click', () => highlightSegment(segment.dataset.segment));
+      segment.addEventListener('mouseenter', () => highlightSegment(segment.dataset.segment));
+    });
+
+    codeSegments.forEach(segment => {
+      segment.addEventListener('click', () => highlightSegment(segment.dataset.segment));
+      segment.addEventListener('mouseenter', () => highlightSegment(segment.dataset.segment));
+    });
+
+    // ==================== TEST CASE ANIMATION ====================
+    const testCases = document.querySelectorAll('.test-case');
+
+    const testObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const testCase = entry.target;
+          const steps = testCase.querySelectorAll('.calc-step');
+          const badge = testCase.querySelector('.test-case-badge');
+
+          // Animate steps one by one
+          steps.forEach((step, index) => {
+            setTimeout(() => {
+              step.classList.add('visible');
+            }, index * 300);
+          });
+
+          // Show badge after all steps
+          setTimeout(() => {
+            badge.classList.add('visible');
+          }, steps.length * 300 + 200);
+
+          testObserver.unobserve(testCase);
+        }
+      });
+    }, {
+      threshold: 0.3
+    });
+
+    testCases.forEach(tc => testObserver.observe(tc));
+
+    // ==================== CALCULATOR LOGIC ====================
+    const LOWER_LIMIT = 1400;
+    const INCOME_THRESHOLD = 150000;
+    const INCOME_REDUCTION_RATE = 0.2;
+    const HOUSING_CEILING = { 1: 6800, 2: 7900, 3: 8600 };
+    const SPECIAL_ALLOWANCE = { 1: 1500, 2: 2000, 3: 2650 };
+
+    let calcState = { children: 1, housingCost: 6000, income: 180000 };
+
+    function calculateAllowance(children, housingCost, income) {
+      const childCount = Math.min(children, 3);
+      const ceiling = HOUSING_CEILING[childCount];
+      const specialAllowance = SPECIAL_ALLOWANCE[childCount];
+
+      let baseHousingCost = 0;
+      if (housingCost > LOWER_LIMIT) {
+        if (housingCost >= ceiling) {
+          baseHousingCost = ceiling - LOWER_LIMIT;
+        } else {
+          baseHousingCost = housingCost - LOWER_LIMIT;
+        }
+      }
+
+      const housingAllowance = baseHousingCost * 0.5;
+      const preliminaryAllowance = housingAllowance + specialAllowance;
+
+      let incomeDeduction = 0;
+      if (income > INCOME_THRESHOLD) {
+        incomeDeduction = (income - INCOME_THRESHOLD) * INCOME_REDUCTION_RATE / 12;
+      }
+
+      const finalAllowance = Math.max(0, preliminaryAllowance - incomeDeduction);
+
+      return {
+        housingAllowance,
+        specialAllowance,
+        incomeDeduction,
+        finalAllowance,
+        ceiling,
+        childCount,
+        hasIncomeDeduction: income > INCOME_THRESHOLD
+      };
+    }
+
+    function formatCurrency(num) {
+      return Math.round(num).toLocaleString('sv-SE');
+    }
+
+    function updateRuleHighlighting(result) {
+      // Reset all rule blocks
+      document.querySelectorAll('.rule-block').forEach(block => {
+        block.classList.remove('active', 'highlight', 'dimmed');
+      });
+
+      // Reset all child-specific highlights
+      document.querySelectorAll('[data-children]').forEach(el => {
+        el.classList.remove('active-child');
+      });
+
+      // 15 § - highlight om inkomstavdrag görs, annars aktiv
+      document.querySelectorAll('[data-rule="15"]').forEach(el => {
+        el.classList.add(result.hasIncomeDeduction ? 'highlight' : 'active');
+      });
+
+      // 16 § - highlight om bidraget under miniminivån, annars dimmed
+      document.querySelectorAll('[data-rule="16"]').forEach(el => {
+        el.classList.add(result.finalAllowance * 12 < 1200 ? 'highlight' : 'dimmed');
+      });
+
+      // 17 § - highlight om 3+ barn, annars dimmed
+      document.querySelectorAll('[data-rule="17"]').forEach(el => {
+        el.classList.add(calcState.children >= 3 ? 'highlight' : 'dimmed');
+      });
+
+      // 18 § - alltid aktiv
+      document.querySelectorAll('[data-rule="18"]').forEach(el => {
+        el.classList.add('active');
+      });
+
+      // 22 § - alltid aktiv
+      document.querySelectorAll('[data-rule="22"]').forEach(el => {
+        el.classList.add('active');
+      });
+
+      // Highlight specific child count rule
+      const childCount = Math.min(calcState.children, 3);
+      document.querySelectorAll(`[data-children="${childCount}"]`).forEach(el => {
+        el.classList.add('active-child');
+      });
+    }
+
+    function updateCalculator() {
+      const result = calculateAllowance(calcState.children, calcState.housingCost, calcState.income);
+
+      // Uppdatera resultat
+      document.getElementById('resultAmount').innerHTML =
+        `${formatCurrency(result.finalAllowance)} <span>kr/mån</span>`;
+
+      // Uppdatera highlighting
+      updateRuleHighlighting(result);
+    }
+
+    // ==================== VIEW SWITCH ====================
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const lawView = document.getElementById('lawView');
+    const codeView = document.getElementById('codeView');
+
+    viewBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (btn.dataset.view === 'law') {
+          lawView.classList.add('active');
+          codeView.classList.remove('active');
+        } else {
+          lawView.classList.remove('active');
+          codeView.classList.add('active');
+        }
+      });
+    });
+
+    // ==================== CHILDREN SELECTOR ====================
+    document.querySelectorAll('#childrenSelector .child-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('#childrenSelector .child-option').forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        calcState.children = parseInt(option.dataset.value);
+        updateCalculator();
+      });
+    });
+
+    // ==================== HOUSING COST ====================
+    const housingCostInput = document.getElementById('housingCost');
+    const housingCostSlider = document.getElementById('housingCostSlider');
+
+    housingCostInput.addEventListener('input', (e) => {
+      calcState.housingCost = parseFloat(e.target.value) || 0;
+      housingCostSlider.value = Math.min(calcState.housingCost, 15000);
+      updateCalculator();
+    });
+
+    housingCostSlider.addEventListener('input', (e) => {
+      calcState.housingCost = parseFloat(e.target.value);
+      housingCostInput.value = calcState.housingCost;
+      updateCalculator();
+    });
+
+    // ==================== INCOME ====================
+    const incomeInput = document.getElementById('income');
+    const incomeSlider = document.getElementById('incomeSlider');
+
+    incomeInput.addEventListener('input', (e) => {
+      calcState.income = parseFloat(e.target.value) || 0;
+      incomeSlider.value = Math.min(calcState.income, 400000);
+      updateCalculator();
+    });
+
+    incomeSlider.addEventListener('input', (e) => {
+      calcState.income = parseFloat(e.target.value);
+      incomeInput.value = calcState.income;
+      updateCalculator();
+    });
+
+    // ==================== INITIALIZE ====================
+    updateCalculator();
+  </script>
+</body>
+</html>
