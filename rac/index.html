@@ -1455,9 +1455,15 @@
     @media (max-width: 700px) {
       .possibilities-content {
         height: auto;
+        max-height: 500px;
+        overflow-y: auto;
       }
       .possibilities-panel.active {
         grid-template-columns: 1fr;
+      }
+      .panel-code pre {
+        max-height: 250px;
+        overflow-y: auto;
       }
     }
 
