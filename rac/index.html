@@ -1937,11 +1937,11 @@
             <div class="input-section">
               <h4>Antal hemmavarande barn</h4>
               <div class="children-selector" id="childrenSelector">
-                <div class="child-option active" data-value="1">
+                <div class="child-option" data-value="1">
                   <span class="number">1</span>
                   <span class="label">barn</span>
                 </div>
-                <div class="child-option" data-value="2">
+                <div class="child-option active" data-value="2">
                   <span class="number">2</span>
                   <span class="label">barn</span>
                 </div>
@@ -1956,10 +1956,10 @@
               <h4>Bostadskostnad</h4>
               <div class="input-group">
                 <div class="input-wrapper">
-                  <input type="number" id="housingCost" value="6000" min="0" max="20000" step="100">
+                  <input type="number" id="housingCost" value="7000" min="0" max="20000" step="100">
                   <span class="unit">kr/mån</span>
                 </div>
-                <input type="range" id="housingCostSlider" value="6000" min="0" max="15000" step="100">
+                <input type="range" id="housingCostSlider" value="7000" min="0" max="15000" step="100">
               </div>
             </div>
 
@@ -2354,7 +2354,7 @@
     const SPECIAL_ALLOWANCE = { 1: 1500, 2: 2000, 3: 2650 };
     const MIN_MONTHLY_BENEFIT = 100; // 16 §: 1 200 kr/år = 100 kr/månad
 
-    let calcState = { children: 1, housingCost: 6000, income: 180000 };
+    let calcState = { children: 2, housingCost: 7000, income: 180000 };
 
     function calculateAllowance(children, housingCost, income) {
       const childCount = Math.min(children, 3);
