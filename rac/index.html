@@ -827,6 +827,7 @@
       gap: 1.5rem;
       max-width: 1000px;
       margin: 0 auto;
+      align-items: stretch;
     }
 
     @media (max-width: 800px) {
@@ -1258,7 +1259,6 @@
       flex: 1;
       padding: 1rem;
       overflow-y: auto;
-      max-height: 520px;
     }
 
     .rules-view {
@@ -1435,11 +1435,14 @@
       border: 1px solid var(--border-light);
       border-top: none;
       border-radius: 0 0 var(--radius-md) var(--radius-md);
+      height: 320px;
+      overflow: hidden;
     }
 
     .possibilities-panel {
       display: none;
       padding: 2rem;
+      height: 100%;
     }
 
     .possibilities-panel.active {
@@ -1447,13 +1450,14 @@
       grid-template-columns: 1fr 1.2fr;
       gap: 2rem;
       align-items: start;
-      min-height: 300px;
     }
 
     @media (max-width: 700px) {
+      .possibilities-content {
+        height: auto;
+      }
       .possibilities-panel.active {
         grid-template-columns: 1fr;
-        min-height: auto;
       }
     }
 
@@ -1490,7 +1494,6 @@
     .panel-code pre {
       padding: 1rem;
       margin: 0;
-      overflow: hidden;
     }
 
     .panel-code code {
