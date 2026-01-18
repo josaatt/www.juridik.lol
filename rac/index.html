@@ -1114,12 +1114,63 @@
       margin: 0;
     }
 
+    /* Calc breakdown */
+    .calc-breakdown {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+    }
+
+    .breakdown-row:not(:last-child) {
+      border-bottom: 1px dashed var(--border-light);
+    }
+
+    .breakdown-label {
+      color: var(--text-secondary);
+    }
+
+    .breakdown-value {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .breakdown-row.subtotal {
+      margin-top: 0.25rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border-medium);
+      border-bottom: none;
+    }
+
+    .breakdown-row.subtotal .breakdown-label {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .breakdown-row.deduction .breakdown-value {
+      color: #8b0000;
+    }
+
+    .breakdown-row.deduction.hidden {
+      display: none;
+    }
+
     /* Calc result compact */
     .calc-result-compact {
       background: var(--accent-primary);
       border-radius: var(--radius-md);
       padding: 1.25rem 1.5rem;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       text-align: center;
     }
 
@@ -1923,6 +1974,25 @@
               </div>
             </div>
 
+            <div class="calc-breakdown" id="calcBreakdown">
+              <div class="breakdown-row">
+                <span class="breakdown-label">Bidrag till bostadskostnad (18 §)</span>
+                <span class="breakdown-value" id="housingAllowanceValue">2 300 kr</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Särskilt bidrag (22 §)</span>
+                <span class="breakdown-value" id="specialAllowanceValue">1 500 kr</span>
+              </div>
+              <div class="breakdown-row subtotal">
+                <span class="breakdown-label">Preliminärt bidrag</span>
+                <span class="breakdown-value" id="preliminaryValue">3 800 kr</span>
+              </div>
+              <div class="breakdown-row deduction" id="deductionRow">
+                <span class="breakdown-label">Inkomstavdrag (15 §)</span>
+                <span class="breakdown-value" id="deductionValue">−500 kr</span>
+              </div>
+            </div>
+
             <div class="calc-result-compact">
               <div class="result-label">Bostadsbidrag</div>
               <div class="result-amount" id="resultAmount">3 800 <span>kr/mån</span></div>
@@ -2377,7 +2447,25 @@
     function updateCalculator() {
       const result = calculateAllowance(calcState.children, calcState.housingCost, calcState.income);
 
-      // Uppdatera resultat
+      // Uppdatera delbelopp
+      document.getElementById('housingAllowanceValue').textContent =
+        `${formatCurrency(result.housingAllowance)} kr`;
+      document.getElementById('specialAllowanceValue').textContent =
+        `${formatCurrency(result.specialAllowance)} kr`;
+      document.getElementById('preliminaryValue').textContent =
+        `${formatCurrency(result.housingAllowance + result.specialAllowance)} kr`;
+
+      // Visa/dölj inkomstavdrag
+      const deductionRow = document.getElementById('deductionRow');
+      if (result.incomeDeduction > 0) {
+        deductionRow.classList.remove('hidden');
+        document.getElementById('deductionValue').textContent =
+          `−${formatCurrency(result.incomeDeduction)} kr`;
+      } else {
+        deductionRow.classList.add('hidden');
+      }
+
+      // Uppdatera slutresultat
       document.getElementById('resultAmount').innerHTML =
         `${formatCurrency(result.finalAllowance)} <span>kr/mån</span>`;
 
