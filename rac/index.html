@@ -290,6 +290,18 @@
       color: white !important;
     }
 
+    .merged-step {
+      background: #f0f7f0;
+      border: 1px solid #c8dcc8;
+    }
+
+    .replaces {
+      font-size: 0.8rem;
+      color: var(--accent-primary);
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
     .benefits-list {
       display: flex;
       flex-wrap: wrap;
@@ -1615,56 +1627,55 @@
   <!-- SECTION 3: HUR DET SKULLE KUNNA VARA -->
   <section class="section vision" id="vision">
     <div class="section-content">
-      <h2 class="fade-in">Hur det skulle kunna vara</h2>
+      <h2 class="fade-in">Med formaliserade regler</h2>
 
       <div class="flow-vertical fade-in fade-in-delay-1">
         <div class="flow-step-large vision-step">
           <div class="flow-number vision-number">1</div>
           <div class="flow-text">
-            <strong>Lagregler publiceras</strong>
+            <strong>Lagtext publiceras</strong>
             <span>Riksdagen beslutar om ny eller ändrad lag</span>
           </div>
         </div>
-        <div class="flow-arrow-down">↓</div>
 
-        <div class="flow-step-large vision-step">
+        <div class="flow-step-large vision-step merged-step">
           <div class="flow-number vision-number">2</div>
           <div class="flow-text">
-            <strong>Jurist och utvecklare implementerar tillsammans</strong>
-            <span>Reglerna skrivs i ett språk båda förstår</span>
+            <strong>Reglerna formaliseras</strong>
+            <span>Jurist och utvecklare skriver koden tillsammans</span>
+            <span class="replaces">Ersätter: tolkning → kravspec → implementation</span>
           </div>
         </div>
-        <div class="flow-arrow-down">↓</div>
 
         <div class="flow-step-large vision-step">
           <div class="flow-number vision-number">3</div>
           <div class="flow-text">
-            <strong>Juristen kan förstå koden</strong>
-            <span>Och säkerställa att den stämmer överens med lagtexten</span>
+            <strong>Driftsättning</strong>
+            <span>Koden kompileras och rullas ut</span>
           </div>
         </div>
       </div>
 
       <div class="benefits-list fade-in fade-in-delay-2">
         <div class="benefit-item">
-          <div class="benefit-icon">⚡</div>
+          <div class="benefit-icon"></div>
           <div class="benefit-text">
-            <strong>Snabbare implementation</strong>
-            <span>Färre steg från lag till fungerande system</span>
+            <strong>Tre steg blir ett</strong>
+            <span>Kortare ledtid från lag till system</span>
           </div>
         </div>
         <div class="benefit-item">
-          <div class="benefit-icon">🔗</div>
+          <div class="benefit-icon"></div>
           <div class="benefit-text">
-            <strong>Direkt koppling</strong>
-            <span>Varje kodrad kan spåras till lagtexten</span>
+            <strong>Koden är specen</strong>
+            <span>Inga tolkningsfel mellan stegen</span>
           </div>
         </div>
         <div class="benefit-item">
-          <div class="benefit-icon">✓</div>
+          <div class="benefit-icon"></div>
           <div class="benefit-text">
-            <strong>Juristen kan verifiera</strong>
-            <span>Ingen "black box" — koden är läsbar</span>
+            <strong>Spårbart till paragraf</strong>
+            <span>Varje rad kopplas till lagtexten</span>
           </div>
         </div>
       </div>
