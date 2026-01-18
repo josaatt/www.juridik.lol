@@ -1447,11 +1447,13 @@
       grid-template-columns: 1fr 1.2fr;
       gap: 2rem;
       align-items: start;
+      min-height: 300px;
     }
 
     @media (max-width: 700px) {
       .possibilities-panel.active {
         grid-template-columns: 1fr;
+        min-height: auto;
       }
     }
 
@@ -1488,7 +1490,7 @@
     .panel-code pre {
       padding: 1rem;
       margin: 0;
-      overflow-x: auto;
+      overflow: hidden;
     }
 
     .panel-code code {
