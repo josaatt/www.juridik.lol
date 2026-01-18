@@ -1394,40 +1394,127 @@
       color: var(--text-primary);
     }
 
-    .possibility-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+    .possibilities-tabs {
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .possibility-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      padding: 1.75rem 2rem;
-      border: 1px solid var(--border-light);
+    .possibilities-tab-list {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 0;
+      flex-wrap: wrap;
     }
 
-    .possibility-card:hover {
-      border-color: var(--border-medium);
-    }
-
-    .possibility-icon {
-      display: none;
-    }
-
-    .possibility-card h3 {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 0.75rem;
-      color: var(--accent-primary);
-    }
-
-    .possibility-card p {
+    .possibilities-tab {
+      padding: 0.75rem 1.25rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-body);
       font-size: 0.9rem;
       color: var(--text-secondary);
-      line-height: 1.6;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: -1px;
+    }
+
+    .possibilities-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .possibilities-tab.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+      font-weight: 500;
+    }
+
+    .possibilities-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-top: none;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    .possibilities-panel {
+      display: none;
+      padding: 2rem;
+    }
+
+    .possibilities-panel.active {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .possibilities-panel.active {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-text h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .panel-text p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
       margin: 0;
+    }
+
+    .panel-code {
+      background: var(--bg-code);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .code-header {
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.05);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .panel-code pre {
+      padding: 1rem;
+      margin: 0;
+      overflow-x: auto;
+    }
+
+    .panel-code code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-code);
+    }
+
+    .test-pass {
+      color: #4ade80;
+      font-weight: bold;
+    }
+
+    .diff-remove {
+      color: #f87171;
+      display: block;
+    }
+
+    .diff-add {
+      color: #4ade80;
+      display: block;
+    }
+
+    .code-string {
+      color: #CE9178;
     }
 
     .code-view {
@@ -2213,59 +2300,116 @@
         myndigheter, medborgare och lagstiftare.
       </p>
 
-      <div class="possibility-grid fade-in fade-in-delay-2">
-        <div class="possibility-card">
-          <div class="possibility-icon">🧪</div>
-          <h3>Testa implementationen</h3>
-          <p>
-            Kör automatiserade tester mot lagtexten för att verifiera att implementeringen
-            är korrekt. Varje paragraf kan testas isolerat med kända in- och utdata.
-          </p>
+      <div class="possibilities-tabs fade-in fade-in-delay-2">
+        <div class="possibilities-tab-list">
+          <button class="possibilities-tab active" data-tab="test">Testa</button>
+          <button class="possibilities-tab" data-tab="simulate">Simulera</button>
+          <button class="possibilities-tab" data-tab="versions">Versioner</button>
+          <button class="possibilities-tab" data-tab="api">API</button>
+          <button class="possibilities-tab" data-tab="transparency">Transparens</button>
         </div>
 
-        <div class="possibility-card">
-          <div class="possibility-icon">📊</div>
-          <h3>Simulera utfall</h3>
-          <p>
-            Analysera hur lagändringar påverkar olika grupper innan de träder i kraft.
-            Kör "what-if"-scenarier på stora datamängder.
-          </p>
-        </div>
+        <div class="possibilities-content">
+          <div class="possibilities-panel active" data-panel="test">
+            <div class="panel-text">
+              <h3>Testa implementationen</h3>
+              <p>Kör automatiserade tester mot lagtexten för att verifiera att implementeringen är korrekt. Varje paragraf kan testas isolerat med kända in- och utdata.</p>
+            </div>
+            <div class="panel-code">
+              <div class="code-header">test_bostadsbidrag.catala</div>
+              <pre><code><span class="code-keyword">declaration scope</span> <span class="code-type">Test_Familj_2_Barn</span>:
+  <span class="code-variable">bidrag</span> <span class="code-keyword">scope</span> <span class="code-type">Bostadsbidrag</span>
 
-        <div class="possibility-card">
-          <div class="possibility-icon">🔄</div>
-          <h3>Versionhantering</h3>
-          <p>
-            Spåra ändringar över tid. Se exakt vad som ändrades mellan två versioner
-            av lagen och hur det påverkar beräkningarna.
-          </p>
-        </div>
+<span class="code-keyword">scope</span> <span class="code-type">Test_Familj_2_Barn</span>:
+  <span class="code-keyword">definition</span> <span class="code-variable">bidrag.antal_barn</span> <span class="code-keyword">equals</span> <span class="code-number">2</span>
+  <span class="code-keyword">definition</span> <span class="code-variable">bidrag.bostadskostnad</span> <span class="code-keyword">equals</span> <span class="code-number">$7,000</span>
+  <span class="code-keyword">definition</span> <span class="code-variable">bidrag.inkomst</span> <span class="code-keyword">equals</span> <span class="code-number">$180,000</span>
 
-        <div class="possibility-card">
-          <div class="possibility-icon">🌐</div>
-          <h3>API:er för beslutsstöd</h3>
-          <p>
-            Exponera reglerna som tjänster som andra system kan anropa. Säkerställ
-            att alla myndigheter tillämpar samma regler på samma sätt.
-          </p>
-        </div>
+  <span class="code-keyword">assertion</span> <span class="code-variable">bidrag.bostadsbidrag</span> <span class="code-operator">=</span> <span class="code-number">$4,300</span> <span class="test-pass">✓</span></code></pre>
+            </div>
+          </div>
 
-        <div class="possibility-card">
-          <div class="possibility-icon">👤</div>
-          <h3>Transparens för medborgare</h3>
-          <p>
-            Låt medborgare se exakt hur deras bidrag beräknades och vilka
-            regler som tillämpades — inte bara resultatet.
-          </p>
-        </div>
+          <div class="possibilities-panel" data-panel="simulate">
+            <div class="panel-text">
+              <h3>Simulera utfall</h3>
+              <p>Analysera hur lagändringar påverkar olika grupper innan de träder i kraft. Kör "what-if"-scenarier på stora datamängder.</p>
+            </div>
+            <div class="panel-code">
+              <div class="code-header">simulation.py</div>
+              <pre><code><span class="code-comment"># Vad händer om inkomstgränsen höjs till 180 000 kr?</span>
 
-        <div class="possibility-card">
-          <div class="possibility-icon">⚖️</div>
-          <h3>Juridisk kvalitetssäkring</h3>
-          <p>
-            Upptäck motsägelser och luckor i lagstiftningen innan den antas.
-            Formalisering tvingar fram precision.
-          </p>
+<span class="code-keyword">for</span> hushåll <span class="code-keyword">in</span> befolkningsdata:
+    nuvarande <span class="code-operator">=</span> beräkna(hushåll, gräns<span class="code-operator">=</span><span class="code-number">150_000</span>)
+    nytt <span class="code-operator">=</span> beräkna(hushåll, gräns<span class="code-operator">=</span><span class="code-number">180_000</span>)
+
+<span class="code-comment"># Resultat:</span>
+<span class="code-comment"># +12 400 hushåll får bidrag</span>
+<span class="code-comment"># +89 mkr i årlig kostnad</span>
+<span class="code-comment"># Medelökning: 340 kr/mån</span></code></pre>
+            </div>
+          </div>
+
+          <div class="possibilities-panel" data-panel="versions">
+            <div class="panel-text">
+              <h3>Versionhantering</h3>
+              <p>Spåra ändringar över tid. Se exakt vad som ändrades mellan två versioner av lagen och hur det påverkar beräkningarna.</p>
+            </div>
+            <div class="panel-code">
+              <div class="code-header">git diff 2024:1 2025:1</div>
+              <pre><code><span class="code-comment">  # 15 § Inkomstgräns</span>
+<span class="diff-remove">- definition inkomstgrans equals $150,000</span>
+<span class="diff-add">+ definition inkomstgrans equals $180,000</span>
+
+<span class="code-comment">  # 22 § Särskilt bidrag</span>
+<span class="diff-remove">- | 1 -> $1,500</span>
+<span class="diff-add">+ | 1 -> $1,600</span>
+<span class="diff-remove">- | 2 -> $2,000</span>
+<span class="diff-add">+ | 2 -> $2,150</span></code></pre>
+            </div>
+          </div>
+
+          <div class="possibilities-panel" data-panel="api">
+            <div class="panel-text">
+              <h3>API för beslutsstöd</h3>
+              <p>Exponera reglerna som tjänster som andra system kan anropa. Säkerställ att alla myndigheter tillämpar samma regler.</p>
+            </div>
+            <div class="panel-code">
+              <div class="code-header">curl request</div>
+              <pre><code><span class="code-keyword">POST</span> /api/bostadsbidrag/berakna
+
+{
+  "antal_barn": <span class="code-number">2</span>,
+  "bostadskostnad": <span class="code-number">7000</span>,
+  "inkomst": <span class="code-number">180000</span>
+}
+
+<span class="code-comment">// Svar:</span>
+{
+  "bidrag": <span class="code-number">4300</span>,
+  "paragrafer": [<span class="code-string">"15§"</span>, <span class="code-string">"18§"</span>, <span class="code-string">"22§"</span>],
+  "berakningssteg": [...]
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="possibilities-panel" data-panel="transparency">
+            <div class="panel-text">
+              <h3>Transparens för medborgare</h3>
+              <p>Låt medborgare se exakt hur deras bidrag beräknades och vilka regler som tillämpades — inte bara resultatet.</p>
+            </div>
+            <div class="panel-code">
+              <div class="code-header">Ditt beslut — spårbarhet</div>
+              <pre><code><span class="code-comment">Bostadsbidrag: 4 300 kr/mån</span>
+
+<span class="code-keyword">Tillämpade regler:</span>
+├─ <span class="code-string">18 §</span> Bidrag till bostadskostnad
+│  └─ (7 000 - 1 400) × 50% = <span class="code-number">2 800 kr</span>
+├─ <span class="code-string">22 §</span> Särskilt bidrag för 2 barn
+│  └─ <span class="code-number">2 000 kr</span>
+└─ <span class="code-string">15 §</span> Inkomstavdrag
+   └─ (180 000 - 150 000) × 20% ÷ 12 = <span class="code-number">−500 kr</span></code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2501,6 +2645,22 @@
           lawView.classList.remove('active');
           codeView.classList.add('active');
         }
+      });
+    });
+
+    // ==================== POSSIBILITIES TABS ====================
+    const possibilityTabs = document.querySelectorAll('.possibilities-tab');
+    const possibilityPanels = document.querySelectorAll('.possibilities-panel');
+
+    possibilityTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetPanel = tab.dataset.tab;
+
+        possibilityTabs.forEach(t => t.classList.remove('active'));
+        possibilityPanels.forEach(p => p.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.querySelector(`[data-panel="${targetPanel}"]`).classList.add('active');
       });
     });
 
