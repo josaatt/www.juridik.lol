@@ -233,6 +233,60 @@
             animation: screen-shake 0.4s steps(2);
         }
 
+        body.flying .content,
+        body.flying .linkedin,
+        body.flying .corner,
+        body.flying .pixel-bg {
+            display: none;
+        }
+
+        .flight-hud {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            align-items: center;
+            flex-direction: column;
+            gap: 14px;
+            color: var(--cyan);
+            text-align: center;
+            text-shadow: 0 0 10px var(--cyan);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        body.flying .flight-hud {
+            display: flex;
+        }
+
+        .flight-hud strong {
+            font-size: 18px;
+            color: var(--yellow);
+            text-shadow: 0 0 12px var(--magenta);
+        }
+
+        .flight-hud span,
+        .flight-hud button {
+            font: 8px 'Press Start 2P', cursive;
+        }
+
+        .flight-hud button {
+            pointer-events: auto;
+            padding: 10px;
+            color: var(--cyan);
+            background: var(--black);
+            border: 2px solid var(--cyan);
+            cursor: pointer;
+        }
+
+        .flight-hud button:hover,
+        .flight-hud button:focus-visible {
+            color: var(--black);
+            background: var(--cyan);
+        }
+
         @media (max-width: 768px) {
             .linkedin {
                 bottom: 16px;
@@ -248,6 +302,12 @@
     <div class="crt"></div>
     <div class="pixel-bg"></div>
     <canvas id="canvas"></canvas>
+    <div class="flight-hud">
+        <strong>SPÄJS</strong>
+        <span>↑ ↓ ← → STYR</span>
+        <button type="button" id="flight-exit">ESC TILLBAKA</button>
+    </div>
+
 
     <div class="corner corner-tl"></div>
     <div class="corner corner-tr"></div>
@@ -297,14 +357,21 @@
         let width, height;
         const pixelSize = 8;
         let stars = [];
-        let time = 0;
-
+        let flightStars = [];
+        let flying = false;
+        let focalLength = 0;
+        let yawSpeed = 0;
+        let pitchSpeed = 0;
+        const flightDepth = 1400;
+        const flightKeys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
         const colors = ['#c84b9e', '#00fff2', '#fff847', '#4a1942'];
 
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            focalLength = Math.min(width, height) * 0.8;
             initStars();
+            if (flying) initFlightStars();
         }
 
         function initStars() {
@@ -323,7 +390,6 @@
         }
 
         function update() {
-            time += 0.05;
             stars.forEach(star => {
                 star.y += star.speed;
                 star.twinkle += 0.1;
@@ -349,36 +415,172 @@
             ctx.globalAlpha = 1;
         }
 
-        function animate() {
-            if (!animating) return;
-            update();
-            draw();
-            requestAnimationFrame(animate);
+        // Stjärnorna ligger i kamerans 3D-rum: framåtfart minskar z,
+        // pilarna vrider synfältet och stjärnor utanför vyn återförs längst bort.
+        function resetFlightStar(star, randomDepth) {
+            star.z = randomDepth ? 24 + Math.random() * (flightDepth - 24) : flightDepth;
+            star.x = (Math.random() - 0.5) * width * star.z / focalLength * 1.2;
+            star.y = (Math.random() - 0.5) * height * star.z / focalLength * 1.2;
+            star.previousX = NaN;
+            star.color = colors[Math.floor(Math.random() * 3)];
         }
 
-        let animating = true;
+        function initFlightStars() {
+            const count = Math.max(450, Math.min(1250, Math.floor(width * height / 1500)));
+            flightStars = new Array(count);
+            for (let i = 0; i < count; i++) {
+                const star = {};
+                resetFlightStar(star, true);
+                flightStars[i] = star;
+            }
+        }
+
+        function clearFlightKeys() {
+            for (const key in flightKeys) flightKeys[key] = false;
+            yawSpeed = 0;
+            pitchSpeed = 0;
+        }
+
+        function enterFlight() {
+            if (flying) return;
+            flying = true;
+            clearFlightKeys();
+            initFlightStars();
+            document.body.classList.add('flying');
+        }
+
+        function exitFlight() {
+            if (!flying) return;
+            flying = false;
+            clearFlightKeys();
+            flightStars = [];
+            typedKeys = '';
+            document.body.classList.remove('flying');
+        }
+
+        function drawFlight(dt) {
+            const response = Math.min(1, dt * 7);
+            yawSpeed += (((Number(flightKeys.ArrowRight) - Number(flightKeys.ArrowLeft)) * 1.25) - yawSpeed) * response;
+            pitchSpeed += (((Number(flightKeys.ArrowUp) - Number(flightKeys.ArrowDown)) * 1.25) - pitchSpeed) * response;
+            const yaw = yawSpeed * dt;
+            const pitch = pitchSpeed * dt;
+            const cosYaw = Math.cos(yaw);
+            const sinYaw = Math.sin(yaw);
+            const cosPitch = Math.cos(pitch);
+            const sinPitch = Math.sin(pitch);
+
+            ctx.fillStyle = '#0f0f1b';
+            ctx.fillRect(0, 0, width, height);
+
+            for (let i = 0; i < flightStars.length; i++) {
+                const star = flightStars[i];
+                const forwardZ = star.z - 360 * dt;
+                const turnedX = star.x * cosYaw - forwardZ * sinYaw;
+                const turnedZ = star.x * sinYaw + forwardZ * cosYaw;
+                const turnedY = star.y * cosPitch + turnedZ * sinPitch;
+                star.z = -star.y * sinPitch + turnedZ * cosPitch;
+                star.x = turnedX;
+                star.y = turnedY;
+
+                if (star.z < 24 || star.z > flightDepth ||
+                    Math.abs(star.x * focalLength / star.z) > width * 0.65 ||
+                    Math.abs(star.y * focalLength / star.z) > height * 0.65) {
+                    resetFlightStar(star, false);
+                }
+
+                const x = width * 0.5 + star.x * focalLength / star.z;
+                const y = height * 0.5 + star.y * focalLength / star.z;
+                const proximity = 1 - star.z / flightDepth;
+                const size = 1 + proximity * 4;
+                ctx.globalAlpha = 0.35 + proximity * 0.65;
+                ctx.fillStyle = star.color;
+                if (!Number.isNaN(star.previousX)) {
+                    ctx.strokeStyle = star.color;
+                    ctx.lineWidth = Math.max(1, size * 0.6);
+                    ctx.beginPath();
+                    ctx.moveTo(star.previousX, star.previousY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+                ctx.fillRect(x - size * 0.5, y - size * 0.5, size, size);
+                star.previousX = x;
+                star.previousY = y;
+            }
+            ctx.globalAlpha = 1;
+        }
+
+
+        let frameId = 0;
+        let lastFrame = 0;
+
+        function animate(now) {
+            frameId = 0;
+            if (document.hidden) return;
+            const dt = lastFrame ? Math.min((now - lastFrame) / 1000, 0.05) : 0;
+            lastFrame = now;
+            if (flying) {
+                drawFlight(dt);
+            } else {
+                update();
+                draw();
+            }
+            frameId = requestAnimationFrame(animate);
+        }
+
+        function startAnimation() {
+            if (!document.hidden && !frameId) {
+                lastFrame = 0;
+                frameId = requestAnimationFrame(animate);
+            }
+        }
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                animating = false;
+                clearFlightKeys();
+                cancelAnimationFrame(frameId);
+                frameId = 0;
+                lastFrame = 0;
             } else {
-                animating = true;
-                animate();
+                startAnimation();
             }
         });
+        window.addEventListener('blur', clearFlightKeys);
 
-        // Objection easter egg
+        // Påskägg: skriv "späjs" för 3D-flygning, styr med pilarna och
+        // återgå med Escape/knappen. "objection" fungerar i landningsläget.
         let typedKeys = '';
 
         document.addEventListener('keydown', (e) => {
-            typedKeys += e.key.toLowerCase();
-            if (typedKeys.length > 20) typedKeys = typedKeys.slice(-20);
+            if (flying) {
+                if (e.key === 'Escape') {
+                    exitFlight();
+                } else if (Object.hasOwn(flightKeys, e.key)) {
+                    e.preventDefault();
+                    flightKeys[e.key] = true;
+                }
+                return;
+            }
 
-            if (typedKeys.endsWith('objection')) {
+            const target = e.target;
+            if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey ||
+                (target instanceof Element &&
+                    (target.isContentEditable || target.closest('input, textarea, select, [contenteditable]'))) ||
+                e.key.length !== 1) return;
+
+            typedKeys = (typedKeys + e.key.toLowerCase()).slice(-20);
+            if (typedKeys.endsWith('späjs')) {
+                typedKeys = '';
+                enterFlight();
+            } else if (typedKeys.endsWith('objection')) {
                 typedKeys = '';
                 triggerObjection();
             }
         });
+
+        document.addEventListener('keyup', (e) => {
+            if (Object.hasOwn(flightKeys, e.key)) flightKeys[e.key] = false;
+        });
+        document.getElementById('flight-exit').addEventListener('click', exitFlight);
 
         function triggerObjection() {
             document.body.classList.add('shaking');
@@ -408,7 +610,7 @@
 
         window.addEventListener('resize', resize);
         resize();
-        animate();
+        startAnimation();
     </script>
 </body>
 </html>
