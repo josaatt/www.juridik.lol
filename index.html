@@ -362,7 +362,8 @@
         let focalLength = 0;
         let yawSpeed = 0;
         let pitchSpeed = 0;
-        const flightDepth = 1400;
+        const flightRadius = 1400;
+        const flightRadiusSquared = flightRadius * flightRadius;
         const flightKeys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
         const colors = ['#c84b9e', '#00fff2', '#fff847', '#4a1942'];
 
@@ -415,23 +416,24 @@
             ctx.globalAlpha = 1;
         }
 
-        // Stjärnorna ligger i kamerans 3D-rum: framåtfart minskar z,
-        // pilarna vrider synfältet och stjärnor utanför vyn återförs längst bort.
-        function resetFlightStar(star, randomDepth) {
-            star.z = randomDepth ? 24 + Math.random() * (flightDepth - 24) : flightDepth;
-            star.x = (Math.random() - 0.5) * width * star.z / focalLength * 1.2;
-            star.y = (Math.random() - 0.5) * height * star.z / focalLength * 1.2;
-            star.previousX = NaN;
-            star.color = colors[Math.floor(Math.random() * 3)];
-        }
-
+        // Stjärnorna fyller en sfär runt kameran, även bakom och utanför synfältet.
+        // Framåtfart sveper varje stjärna längs sin x/y-korda; när den passerar
+        // sfärens baksida lindas den till framsidan utan att ändra volymens täthet.
         function initFlightStars() {
-            const count = Math.max(450, Math.min(1250, Math.floor(width * height / 1500)));
+            const count = Math.max(4500, Math.min(12000, Math.floor(width * height / 180)));
             flightStars = new Array(count);
             for (let i = 0; i < count; i++) {
-                const star = {};
-                resetFlightStar(star, true);
-                flightStars[i] = star;
+                const directionZ = 1 - 2 * Math.random();
+                const azimuth = Math.random() * Math.PI * 2;
+                const directionXY = Math.sqrt(1 - directionZ * directionZ);
+                const radius = flightRadius * Math.cbrt(Math.random());
+                flightStars[i] = {
+                    x: radius * directionXY * Math.cos(azimuth),
+                    y: radius * directionXY * Math.sin(azimuth),
+                    z: radius * directionZ,
+                    previousX: NaN,
+                    color: colors[Math.floor(Math.random() * 3)]
+                };
             }
         }
 
@@ -474,7 +476,16 @@
 
             for (let i = 0; i < flightStars.length; i++) {
                 const star = flightStars[i];
-                const forwardZ = star.z - 360 * dt;
+                let forwardZ = star.z - 360 * dt;
+                if (forwardZ < 0 &&
+                    star.x * star.x + star.y * star.y + forwardZ * forwardZ > flightRadiusSquared) {
+                    const halfChord = Math.sqrt(Math.max(0, flightRadiusSquared -
+                        star.x * star.x - star.y * star.y));
+                    forwardZ = halfChord > 0
+                        ? halfChord - ((-halfChord - forwardZ) % (2 * halfChord))
+                        : 0;
+                    star.previousX = NaN;
+                }
                 const turnedX = star.x * cosYaw - forwardZ * sinYaw;
                 const turnedZ = star.x * sinYaw + forwardZ * cosYaw;
                 const turnedY = star.y * cosPitch + turnedZ * sinPitch;
@@ -482,15 +493,21 @@
                 star.x = turnedX;
                 star.y = turnedY;
 
-                if (star.z < 24 || star.z > flightDepth ||
-                    Math.abs(star.x * focalLength / star.z) > width * 0.65 ||
-                    Math.abs(star.y * focalLength / star.z) > height * 0.65) {
-                    resetFlightStar(star, false);
+                if (star.z < 24) {
+                    star.previousX = NaN;
+                    continue;
+                }
+                const projectedX = star.x * focalLength / star.z;
+                const projectedY = star.y * focalLength / star.z;
+                if (Math.abs(projectedX) > width * 0.65 ||
+                    Math.abs(projectedY) > height * 0.65) {
+                    star.previousX = NaN;
+                    continue;
                 }
 
-                const x = width * 0.5 + star.x * focalLength / star.z;
-                const y = height * 0.5 + star.y * focalLength / star.z;
-                const proximity = 1 - star.z / flightDepth;
+                const x = width * 0.5 + projectedX;
+                const y = height * 0.5 + projectedY;
+                const proximity = 1 - star.z / flightRadius;
                 const size = 1 + proximity * 4;
                 ctx.globalAlpha = 0.35 + proximity * 0.65;
                 ctx.fillStyle = star.color;
